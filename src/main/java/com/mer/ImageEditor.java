@@ -68,7 +68,7 @@ public class ImageEditor {
         }
     }
 
-    private double getHeightText(String height) {
+    double getHeightText(String height) {
         return switch (height) {
             case "top" -> 0.1;
             case "center" -> 0.5;
@@ -78,7 +78,7 @@ public class ImageEditor {
     }
 
 
-    private void readImage(String imagePath) throws IOException {
+    void readImage(String imagePath) throws IOException {
             image = ImageIO
                     .read(new File(imagePath));
     }
@@ -93,7 +93,7 @@ public class ImageEditor {
         return inputPath;
     }
 
-    private String getPathWithoutExtension(String path) {
+    String getPathWithoutExtension(String path) {
         Pattern pattern = Pattern.compile(".*(?=\\.)");
         Matcher matcher = pattern.matcher(path);
         String pathWithoutExtension = "";
@@ -107,7 +107,7 @@ public class ImageEditor {
         return pathWithoutExtension;
     }
 
-    private String getImageExtension(String path) {
+    String getImageExtension(String path) {
         Pattern pattern = Pattern.compile("[^\\.]+$");
         Matcher matcher = pattern.matcher(path);
         String imageExtension = "";

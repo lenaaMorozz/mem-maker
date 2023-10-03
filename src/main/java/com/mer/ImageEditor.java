@@ -19,6 +19,7 @@ public class ImageEditor {
         String absolutePath = getAbsolutePath(imagePath);
         String pathWithoutExtension = getPathWithoutExtension(absolutePath);
         String imageExtension = getImageExtension(absolutePath);
+
         try {
             readImage(absolutePath);
         } catch (IOException e) {
@@ -35,6 +36,7 @@ public class ImageEditor {
             } catch (IllegalArgumentException e) {
                 System.out.printf("incorrect command %s\nSee 'help'", args[3]);
             }
+
             if (args.length > 4) {
                 try {
                     fontSize = Integer.parseInt(args[4]);
@@ -44,23 +46,54 @@ public class ImageEditor {
             }
         }
 
+        Graphics2D g2d = prepareGraphics(fontSize);
+        int wightImage = image.getWidth();
+        int height = image.getHeight();
+        int textHeight = (int) (height * heightText);
+
+        String[] words = addingText.split(" ");
+        drawTextWithLineBreaks(g2d, wightImage, textHeight, words);
+
+        g2d.dispose();
+
+        saveImageToFile(pathWithoutExtension, imageExtension);
+    }
+
+    private Graphics2D prepareGraphics(int fontSize) {
         Graphics2D g2d = image.createGraphics();
         Font font = new Font("Arial", Font.BOLD, fontSize);
         g2d.setFont(font);
         g2d.setColor(Color.WHITE);
+        return g2d;
+    }
 
-        int wightImage = image.getWidth();
-        int height = image.getHeight();
+    private void drawTextWithLineBreaks(Graphics2D g2d, int wightImage,
+                                        int textHeight, String[] words) {
+        StringBuilder line = new StringBuilder();
 
-        FontMetrics fm = g2d.getFontMetrics();
-        int textWight = fm.stringWidth(addingText);
-        int textHeight = (int) (height * heightText);
+        for (String word : words) {
+            String testLine = line + (line.length() > 0 ? " " : "") + word;
+            int textWidth = g2d.getFontMetrics().stringWidth(testLine);
 
-        g2d.drawString(addingText, (wightImage - textWight) / 2, textHeight);
+            if (textWidth > wightImage) {
+                drawTextLine(g2d, wightImage, textHeight, line.toString());
+                line = new StringBuilder(word);
+                textHeight += g2d.getFontMetrics().getHeight();
+            } else {
+                line = new StringBuilder(testLine);
+            }
+        }
 
-        g2d.dispose();
+        drawTextLine(g2d, wightImage, textHeight, line.toString());
+    }
 
-        String outputImagePath = pathWithoutExtension + "-new." + imageExtension;
+    private void drawTextLine(Graphics2D g2d, int wightImage, int textHeight, String line) {
+        int x = (wightImage - g2d.getFontMetrics().stringWidth(line)) / 2;
+        g2d.drawString(line, x, textHeight);
+    }
+
+    private void saveImageToFile(String pathWithoutExtension, String imageExtension) {
+        String outputImagePath = pathWithoutExtension + "-mem." + imageExtension;
         try {
             ImageIO.write(image, imageExtension, new File(outputImagePath));
         } catch (IOException e) {
@@ -79,8 +112,8 @@ public class ImageEditor {
 
 
     void readImage(String imagePath) throws IOException {
-            image = ImageIO
-                    .read(new File(imagePath));
+        image = ImageIO
+                .read(new File(imagePath));
     }
 
     private String getAbsolutePath(String inputPath) {

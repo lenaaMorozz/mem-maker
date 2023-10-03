@@ -12,12 +12,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ImageEditorTest {
-    private ImageEditor imageEditor;
-
-    @BeforeEach
-    public void setUp() {
-        imageEditor = new ImageEditor();
-    }
+    private final ImageEditor imageEditor = new ImageEditor();;
 
     @Test
     public void testAddTextToImage() {
@@ -37,10 +32,10 @@ public class ImageEditorTest {
         String[] args = new String[]{"mem", testImagePath, "Hello", "bottom", "24"};
         imageEditor.addTextToImage(args);
 
-        assertTrue(new File("test-image-new.png").exists());
+        assertTrue(new File("test-image-mem.png").exists());
 
         new File("test-image.png").deleteOnExit();
-        new File("test-image-new.png").deleteOnExit();
+        new File("test-image-mem.png").deleteOnExit();
     }
 
     @Test
